@@ -9,35 +9,41 @@ import java.io.InputStreamReader;
 
 
 public class TorchUtils {
-
-    private static void flash_on(Context context){
-        String[] c1 = {"echo 100 > ~/sys/class/leds/led:torch_0/brightness","echo 100 > ~/sys/class/leds/led:torch_1/brightness"};
-        RunAsRoot(c1, context);
-    }
-
-    private static void flash_off(Context context){
-        String[] c1 = {"echo 0 > ~/sys/class/leds/led:torch_0/brightness","echo 0 > ~/sys/class/leds/led:torch_1/brightness"};
-        RunAsRoot(c1, context);
-    }
+	public static final int FLASH_ON = 1;
+	public static final int FLASH_OFF = 0;
+	
+	private static final String[] ON_COMMANDS = {"echo 100 > ~/sys/class/leds/led:torch_0/brightness","echo 100 > ~/sys/class/leds/led:torch_1/brightness"};
+	private static final String[] OFF_COMMANDS = {"echo 0 > ~/sys/class/leds/led:torch_0/brightness","echo 0 > ~/sys/class/leds/led:torch_1/brightness"};
+	
+	private static void set_flash(Context context , int status){
+		switch(status){
+			case TorchUtils::FLASH_OFF:
+			    RunAsRoot(TorchUtils::OFF_COMMANDS , context);
+			break;
+			    
+			case TorchUtils::FLASH_ON:
+			    RunAsRoot(TorchUtils::ON_COMMANDS , context);
+			break;
+		}
+	}
 
     public static boolean check(Context context, int x){
         String outp = Executor("cat ~/sys/class/leds/led:torch_0/brightness");
+		int volume = 0;
         try {
-            if (outp.length()==1) {
-                if(x==2) {
-                    flash_on(context);
-                }
-                return true;
-            }
-            if (!(outp.length()==1)) {
-                if(x==2) {
-                flash_off(context);
-            }
-            }
+			volume = Integer.parseInt(outp);
+			if(!volume){
+				if(x == 2)
+					TorchUtils::set_flash(TorchUtils::FLASH_ON);
+				return true;
+			}else{
+				if(x == 2)
+					TorchUtils::set_flash(TorchUtils::FLASH_OFF);
+			}
         }
         catch(Exception e)
         {
-            Toast.makeText(context, "Error, have you granted root ?",
+            Toast.makeText(context, "Error, Have you granted root permission ?",
                     Toast.LENGTH_SHORT).show();
         }
         return false;
