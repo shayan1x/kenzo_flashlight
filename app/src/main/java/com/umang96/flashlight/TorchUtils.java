@@ -17,12 +17,12 @@ public class TorchUtils {
 	
 	private static void set_flash(Context context , int status){
 		switch(status){
-			case TorchUtils::FLASH_OFF:
-			    RunAsRoot(TorchUtils::OFF_COMMANDS , context);
+			case TorchUtils.FLASH_OFF:
+			    RunAsRoot(TorchUtils.OFF_COMMANDS , context);
 			break;
 			    
-			case TorchUtils::FLASH_ON:
-			    RunAsRoot(TorchUtils::ON_COMMANDS , context);
+			case TorchUtils.FLASH_ON:
+			    RunAsRoot(TorchUtils.ON_COMMANDS , context);
 			break;
 		}
 	}
@@ -34,11 +34,11 @@ public class TorchUtils {
 			volume = Integer.parseInt(outp);
 			if(!volume){
 				if(x == 2)
-					TorchUtils::set_flash(TorchUtils::FLASH_ON);
+					set_flash(TorchUtils.FLASH_ON);
 				return true;
 			}else{
 				if(x == 2)
-					TorchUtils::set_flash(TorchUtils::FLASH_OFF);
+					set_flash(TorchUtils.FLASH_OFF);
 			}
         }
         catch(Exception e)
